@@ -1,26 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Compilation;
 using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
 {
 
+    int[,] map;
+
     public GameObject playerPrefab;
+    public GameObject boxPrefab;
 
     GameObject obj;
     //obj.tag;
     // Start is called before the first frame update
-    
+
 
     GameObject[,] field;
 
     void Start()
     {
 
-       int[,] map = {
+        int[,]map = {
             { 0,0,0,0,0 },
-            { 1,0,0,0,0 },
-            { 0,0,0,0,0 } ,
+            { 0,3,1,3,0 },
+            { 0,0,2,0,0 } ,
+            { 0,2,3,2,0 } ,
+            { 0,0,0,0,0 } 
     };
 
         field = new GameObject[map.GetLength(0), map.GetLength(1)];
@@ -31,10 +37,16 @@ public class GameManagerScript : MonoBehaviour
             {
                 if (map[y, x] == 1)
                 {
-                    field[y,x]=Instantiate(playerPrefab,new Vector3(x,map.GetLength(0)-y,0),Quaternion.identity);
+                    field[y, x] = Instantiate(playerPrefab, new Vector3(x, map.GetLength(0) - y, 0), Quaternion.identity);
 
                     // GameObject instance = Instantiate(playerPrefab, new Vector3(x, map.GetLength(0)-1-y, 0.0f), Quaternion.identity);
                 }
+
+                if (map[y, x] == 2)
+                {
+                    field[y, x] = Instantiate(boxPrefab, new Vector3(x, map.GetLength(0) - y, 0), Quaternion.identity);
+                }
+
             }
         }
 
@@ -74,6 +86,72 @@ public class GameManagerScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
 
+            Vector2Int playerIndex = GetPlayerIndex();
+
+            MoveNumber(playerIndex, playerIndex + new Vector2Int(1, 0));
+
+            if (IsCleard())
+            {
+                Debug.Log("Clear!");
+            }
+
+            //    int playerIndex = GetPlayerIndex();
+
+            //    MoveNumber(1, playerIndex, playerIndex + 1);
+
+            //    PrintArray();
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+
+            Vector2Int playerIndex = GetPlayerIndex();
+
+            MoveNumber(playerIndex, playerIndex - new Vector2Int(1, 0));
+
+            if (IsCleard())
+            {
+                Debug.Log("Clear!");
+            }
+
+            //    int playerIndex = GetPlayerIndex();
+
+            //    MoveNumber(1, playerIndex, playerIndex + 1);
+
+            //    PrintArray();
+        }
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+
+            Vector2Int playerIndex = GetPlayerIndex();
+
+            MoveNumber(playerIndex, playerIndex - new Vector2Int(0, 1));
+
+            if (IsCleard())
+            {
+                Debug.Log("Clear!");
+            }
+
+            //    int playerIndex = GetPlayerIndex();
+
+            //    MoveNumber(1, playerIndex, playerIndex + 1);
+
+            //    PrintArray();
+        }
+
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+
+            Vector2Int playerIndex = GetPlayerIndex();
+
+            MoveNumber(playerIndex, playerIndex + new Vector2Int(0, 1));
+
+            if (IsCleard())
+            {
+                Debug.Log("Clear!");
+            }
+
             //    int playerIndex = GetPlayerIndex();
 
             //    MoveNumber(1, playerIndex, playerIndex + 1);
@@ -95,7 +173,7 @@ public class GameManagerScript : MonoBehaviour
 
     //}
 
-    private Vector2Int GetPlayerIndex()
+    Vector2Int GetPlayerIndex()
     {
         for (int y = 0; y < field.GetLength(0); y++)
         {
@@ -103,35 +181,69 @@ public class GameManagerScript : MonoBehaviour
             {
                 if (field[y, x] == null)
                 {
-                    return new Vector2Int(y,x);
+                    continue;
                 }
+
+                if (field[y, x].tag == "Player")
+                {
+                    return new Vector2Int(x, y);
+                }
+
             }
         }
-        return new Vector2Int(-1,-1);
+
+        return new Vector2Int(-1, -1);
     }
 
-    //bool MoveNumber(int number, int moveFrom, int moveTo)
-    //{
-    //    //移動可能か判断
-    //    if (number < 0 || moveTo >= map.Length) { return false; }
+    bool MoveNumber(Vector2Int moveFrom, Vector2Int moveTo)
+    {
+        //移動可能か判断
+        if (moveTo.y < 0 || moveTo.y >= field.GetLength(0)) { return false; }
+        if (moveTo.x < 0 || moveTo.x >= field.GetLength(1)) { return false; }
 
-    //    //移動先に 2 がいたら
-    //    if (map[moveTo] == 2)
-    //    {
-    //        //どの方向に移動するかを算出
-    //        int velocity = moveTo - moveFrom;
+        //移動先に 2 がいたら
 
-    //        //プレイヤーの移動先から、さらに先へ 2 を移動させる
-    //        //箱の移動処理。MoveNumber
-    //        bool success = MoveNumber(2, moveTo, moveTo + velocity);
+        if (field[moveTo.y, moveTo.x] != null && field[moveTo.y, moveTo.x].tag == "Box")
+        {
+            Vector2Int velocity = moveTo - moveFrom;
+            bool success = MoveNumber(moveTo, moveTo + velocity);
+            if (!success) { return false; }
+        }
 
-    //        if (!success) { return false; }
+        field[moveTo.y, moveTo.x] = field[moveFrom.y, moveFrom.x];
+        field[moveFrom.y, moveFrom.x].transform.position = new Vector3(moveTo.x, field.GetLength(0) - moveTo.y, 0);
+        field[moveFrom.y, moveFrom.x] = null;
 
-    //    }
+        return true;
+    }
 
-    //    map[moveTo] = number;
-    //    map[moveFrom] = 0;
-    //    return true;
-    //}
+    bool IsCleard()
+    {
+        List<Vector2Int> goals = new List<Vector2Int>();
+
+        for (int y = 0; y < map.GetLength(0); y++)
+        {
+            for (int x = 0; x < map.GetLength(1); x++)
+            {
+
+                if (map[y, x] == 3)
+                {
+                    goals.Add(new Vector2Int(x, y));
+                }
+
+            }
+        }
+
+        for (int i = 0; i < goals.Count; i++)
+        {
+            GameObject f = field[goals[i].y, goals[i].x];
+            if (f != null || f.tag != "Box")
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 }
