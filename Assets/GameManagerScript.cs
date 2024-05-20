@@ -21,12 +21,12 @@ public class GameManagerScript : MonoBehaviour
     void Start()
     {
 
-        int[,]map = {
-            { 0,0,0,0,0 },
+        map = new int[,]{
+            { 0,3,3,3,0 },
             { 0,3,1,3,0 },
-            { 0,0,2,0,0 } ,
-            { 0,2,3,2,0 } ,
-            { 0,0,0,0,0 } 
+            { 0,2,2,3,0 },
+            { 0,3,3,3,0 },
+            { 0,3,3,3,3 } 
     };
 
         field = new GameObject[map.GetLength(0), map.GetLength(1)];
@@ -237,7 +237,7 @@ public class GameManagerScript : MonoBehaviour
         for (int i = 0; i < goals.Count; i++)
         {
             GameObject f = field[goals[i].y, goals[i].x];
-            if (f != null || f.tag != "Box")
+            if (f == null || f.tag != "Box")
             {
                 return false;
             }
@@ -245,5 +245,7 @@ public class GameManagerScript : MonoBehaviour
 
         return true;
     }
+
+   
 
 }
