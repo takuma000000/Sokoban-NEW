@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEditor.Compilation;
 using UnityEngine;
 
@@ -15,9 +16,7 @@ public class GameManagerScript : MonoBehaviour
 
     int[,] map;
 
-
-
-
+   
 
     GameObject obj;
     //obj.tag;
@@ -35,7 +34,7 @@ public class GameManagerScript : MonoBehaviour
             { 3,2,0,2,3 },
             { 0,0,0,0,0 },
             { 0,0,0,0,0 } 
-    };
+        };
 
         field = new GameObject[map.GetLength(0), map.GetLength(1)];
 
@@ -71,6 +70,10 @@ public class GameManagerScript : MonoBehaviour
         }
 
         Debug.Log(debugText);
+
+        Screen.SetResolution(1280, 720, false);
+       
+
         //
         //Debug.Log("Hello World");
 
@@ -229,7 +232,11 @@ public class GameManagerScript : MonoBehaviour
         }
 
         field[moveTo.y, moveTo.x] = field[moveFrom.y, moveFrom.x];
-        field[moveFrom.y, moveFrom.x].transform.position = new Vector3(moveTo.x, field.GetLength(0) - moveTo.y, 0);
+        //field[moveFrom.y, moveFrom.x].transform.position = new Vector3(moveTo.x, field.GetLength(0) - moveTo.y, 0);
+
+        Vector3 moveToPosition = new Vector3(moveTo.x, map.GetLength(0) - moveTo.y, 0);
+
+        field[moveFrom.y, moveFrom.x].GetComponent<Move>().MoveTo(moveToPosition);
         field[moveFrom.y, moveFrom.x] = null;
 
         return true;
