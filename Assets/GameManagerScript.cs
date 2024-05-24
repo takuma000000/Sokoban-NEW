@@ -6,10 +6,18 @@ using UnityEngine;
 public class GameManagerScript : MonoBehaviour
 {
 
-    int[,] map;
-
     public GameObject playerPrefab;
     public GameObject boxPrefab;
+    public GameObject goalPrefab;
+
+    public GameObject clearText;
+
+
+    int[,] map;
+
+
+
+
 
     GameObject obj;
     //obj.tag;
@@ -22,11 +30,11 @@ public class GameManagerScript : MonoBehaviour
     {
 
         map = new int[,]{
-            { 0,3,3,3,0 },
-            { 0,3,1,3,0 },
-            { 0,2,2,3,0 },
-            { 0,3,3,3,0 },
-            { 0,3,3,3,3 } 
+            { 0,0,0,0,0 },
+            { 0,0,1,0,0 },
+            { 3,2,0,2,3 },
+            { 0,0,0,0,0 },
+            { 0,0,0,0,0 } 
     };
 
         field = new GameObject[map.GetLength(0), map.GetLength(1)];
@@ -92,8 +100,12 @@ public class GameManagerScript : MonoBehaviour
 
             if (IsCleard())
             {
-                Debug.Log("Clear!");
+                //Debug.Log("Clear!");
+
+                clearText.SetActive(true);
             }
+
+            
 
             //    int playerIndex = GetPlayerIndex();
 
@@ -107,11 +119,13 @@ public class GameManagerScript : MonoBehaviour
 
             Vector2Int playerIndex = GetPlayerIndex();
 
-            MoveNumber(playerIndex, playerIndex - new Vector2Int(1, 0));
+            MoveNumber(playerIndex, playerIndex + new Vector2Int(-1, 0));
 
             if (IsCleard())
             {
-                Debug.Log("Clear!");
+                // Debug.Log("Clear!");
+
+                clearText.SetActive(true);
             }
 
             //    int playerIndex = GetPlayerIndex();
@@ -126,11 +140,13 @@ public class GameManagerScript : MonoBehaviour
 
             Vector2Int playerIndex = GetPlayerIndex();
 
-            MoveNumber(playerIndex, playerIndex - new Vector2Int(0, 1));
+            MoveNumber(playerIndex, playerIndex + new Vector2Int(0, -1));
 
             if (IsCleard())
             {
-                Debug.Log("Clear!");
+                //Debug.Log("Clear!");
+
+                clearText.SetActive(true);
             }
 
             //    int playerIndex = GetPlayerIndex();
@@ -149,7 +165,9 @@ public class GameManagerScript : MonoBehaviour
 
             if (IsCleard())
             {
-                Debug.Log("Clear!");
+                //Debug.Log("Clear!");
+
+                clearText.SetActive(true);
             }
 
             //    int playerIndex = GetPlayerIndex();
@@ -221,9 +239,9 @@ public class GameManagerScript : MonoBehaviour
     {
         List<Vector2Int> goals = new List<Vector2Int>();
 
-        for (int y = 0; y < map.GetLength(0); y++)
+        for (int y = 0; y < field.GetLength(0); y++)
         {
-            for (int x = 0; x < map.GetLength(1); x++)
+            for (int x = 0; x < field.GetLength(1); x++)
             {
 
                 if (map[y, x] == 3)
@@ -246,6 +264,7 @@ public class GameManagerScript : MonoBehaviour
         return true;
     }
 
-   
+  
+
 
 }
