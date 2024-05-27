@@ -44,6 +44,12 @@ public class GameManagerScript : MonoBehaviour
                 {
                     field[y, x] = Instantiate(boxPrefab, new Vector3(x, map.GetLength(0) - y, 0), Quaternion.identity);
                 }
+
+                //if (map[y, x] == 3)
+                //{
+                //    field[y, x] = Instantiate(goalPrefab, new Vector3(x, map.GetLength(0) - y, 0), Quaternion.identity);
+                //}
+
             }
         }
         string debugText = "";
